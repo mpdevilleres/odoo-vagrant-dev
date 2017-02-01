@@ -8,6 +8,7 @@ https://github.com/odoo
 - Postgresql 9.6
 - MailCatcher
 - Python 2.7
+- Jupyter
 
 ## Setup Development ##
 Make sure you have Vagrant in your machine (visit https://www.vagrantup.com/)

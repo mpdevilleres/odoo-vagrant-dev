@@ -18,6 +18,10 @@ Vagrant.configure(2) do |config|
 
   # Mail Catcher port for remote admin on the host
   config.vm.network :forwarded_port, host: 1080, guest: 1080
+  config.vm.network :forwarded_port, host: 25, guest: 25
+
+  # Jupyter port for remote admin on the host
+  config.vm.network :forwarded_port, host: 8888, guest: 8888
 
   # -----------------------------------------------------------------------------------------------
   # Virtual Box Settings (Docs: Docs: http://docs.vagrantup.com/v2/virtualbox/configuration.html)
@@ -25,7 +29,7 @@ Vagrant.configure(2) do |config|
   config.vm.provider "virtualbox" do |vb|
    vb.gui = false
    vb.memory = "3000"
-   vb.name = "Odoo Local Dev Environment1"
+   vb.name = "Odoo Local Dev Environment"
    vb.cpus = 4
   end
 

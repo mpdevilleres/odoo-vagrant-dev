@@ -37,19 +37,30 @@ sudo service postgresql restart
 # Install Tool Packages
 #--------------------------------------------------
 echo -e "\n---- Install tool packages ----"
-sudo apt-get install  -y wget git python-pip python-setuptools python-dev gdebi-core
+sudo apt-get install  -y wget git python-pip python-setuptools \
+                         python-dev gdebi-core libpq-dev build-essential libssl-dev libffi-dev \
+                         libxml2-dev libxslt1-dev libjpeg-dev libsasl2-dev libldap2-dev
+
 #--------------------------------------------------
-# Install Basic Odoo Dependencies
+# Install Basic Odoo
 #--------------------------------------------------
 
-echo -e "\n---- Install Basic Odoo Dependencies ----"
-sudo apt-get install -y python-dateutil python-feedparser python-ldap python-libxslt1 python-lxml \
-                        python-mako python-openid python-psycopg2 python-pybabel python-pychart \
-                        python-pydot python-pyparsing python-reportlab python-simplejson python-tz \
-                        python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml \
-                        python-zsi python-docutils python-psutil python-mock python-unittest2 \
-                        python-jinja2 python-pypdf python-decorator python-requests \
-                        python-passlib python-pil -y python-suds
+if [ -d "/vagrant/odoo" ]; then
+    echo -e "\n---- Odoo Source Exist ----"
+else
+    echo -e "\n---- Clone Odoo Source ----"
+    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/odoo/odoo.git /vagrant/odoo
+fi
+
+echo -e "\n---- Install PIP Requirements Odoo ----"
+sudo pip install -r /vagrant/odoo/requirements.txt
+
+# Additional Helpful Python Modules
+#sudo pip install ipdb ipython
+sudo pip install ipdb ipython[notebook] openpyxl==2.3.5 pandas
+
+# Add odoo path to python
+echo export PYTHONPATH="${PYTHONPATH}:/vagrant/odoo" >> ~/.bashrc
 
 echo -e "\n---- Install other required packages ----"
 sudo apt-get install node-clean-css node-less -y
@@ -60,21 +71,6 @@ sudo gdebi --n wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 # Symlink
 sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
 sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
-
-#--------------------------------------------------
-# Clone Odoo Source
-#--------------------------------------------------
-if [ -d "/vagrant/odoo" ]; then
-    echo -e "\n---- Odoo Source Exist ----"
-else
-    echo -e "\n---- Clone Odoo Source ----"
-    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/odoo/odoo.git /vagrant/odoo
-fi
-# Install Requirements
-sudo pip install -y /vagrant/odoo/requirements.txt
-
-# Additional Helpful Python Modules
-sudo pip install ipdb ipython openpyxl==2.3.5
 
 #--------------------------------------------------
 # Install Mail Catcher
@@ -99,12 +95,27 @@ respawn
 exec /usr/bin/env $(which mailcatcher) --foreground --http-ip=0.0.0.0 --smtp-port=25
 EOT
 
-sudo service mailcatcher status
-sudo service mailcatcher start
+#--------------------------------------------------
+# Create Startup Script for Jupyter
+#--------------------------------------------------
+echo -e "\n---- Create Startup for Jupyter ----"
+cat <<EOT > /etc/init/jupyter.conf
+description "jupyter"
 
-#
+start on runlevel [2345]
+stop on runlevel [!2345]
+
+respawn
+
+exec /usr/bin/env $(which jupyter) notebook --no-browser --port=8888 --ip=0.0.0.0 --notebook-dir=/vagrant
+
+EOT
+
+sudo service jupyter status
+sudo service jupyter start
+
+#--------------------------------------------------
 # Clean up
-#
+#--------------------------------------------------
 sudo apt-get -y autoremove
-
 echo -e "\n---- DONE ----"
