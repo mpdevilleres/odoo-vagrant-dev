@@ -10,18 +10,18 @@ Vagrant.configure(2) do |config|
   # -----------------------------------------------------------------------------------------------
 
   # PostgreSQL port for remote admin on the host
-  config.vm.network :forwarded_port, host: 5432, guest: 5432
+  config.vm.network :forwarded_port, host: 5432, guest: 5432, host_ip: "127.0.0.1"
 
   # Odoo port for remote admin on the host
-  config.vm.network :forwarded_port, host: 8069, guest: 8069
-  config.vm.network :forwarded_port, host: 8072, guest: 8072
+  config.vm.network :forwarded_port, host: 8069, guest: 8069, host_ip: "127.0.0.1"
+  config.vm.network :forwarded_port, host: 8072, guest: 8072, host_ip: "127.0.0.1"
 
   # Mail Catcher port for remote admin on the host
-  config.vm.network :forwarded_port, host: 1080, guest: 1080
-  config.vm.network :forwarded_port, host: 25, guest: 25
+  config.vm.network :forwarded_port, host: 1080, guest: 1080, host_ip: "127.0.0.1"
+  config.vm.network :forwarded_port, host: 25, guest: 25, host_ip: "127.0.0.1"
 
   # Jupyter port for remote admin on the host
-  config.vm.network :forwarded_port, host: 8888, guest: 8888
+  config.vm.network :forwarded_port, host: 8888, guest: 8888, host_ip: "127.0.0.1"
 
   # -----------------------------------------------------------------------------------------------
   # Virtual Box Settings (Docs: Docs: http://docs.vagrantup.com/v2/virtualbox/configuration.html)
