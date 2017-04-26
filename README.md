@@ -4,39 +4,49 @@ Provides structure for developing odoo modules with community and/or enterprise 
 https://github.com/odoo
 
 ## Specifications ##
-- Ubuntu 14 "Trusty"
+- Ubuntu 16 "Xenial"
 - Postgresql 9.6
 - MailCatcher
 - Python 2.7
-- Jupyter
 
 ## Setup Development ##
 Make sure you have Vagrant in your machine (visit https://www.vagrantup.com/)
 
 Step 1: run vagrant (it may take few minutes)
-`$ vagrant up`
+
+    $ vagrant up
 
 Step 2: ssh vagrant
-`$ vagrant ssh`
 
-Step 3: open web browser
-http://localhost:8069
+    $ vagrant ssh
 
-## Configuring security ##
-There are two default passwords supplied in this repo that you should update before using this for your own work.
+Step 3: run odoo
 
-1. Update the sql/authentication.sql file to set a new PostgreSQL user name and password.
+    $ python /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf
 
-2. Update the conf/odoo.conf file to reflect the new PostgreSQL password.  Also update the Odoo Database Master Password which is set in this file.
+    or 
 
-## Running Odoo ##
-`$ python /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf`
-or 
-`$ python /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf -d test_db`
+    $ python /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf -d test_db
+
+Step 4: open web browser
+        
+    http://localhost:8069
 
 ## Creating your first Module ##
-`$ python /vagrant/odoo/odoo-bin scaffold module_name /vagrant/odoo_modules`
+    $ python /vagrant/odoo/odoo-bin scaffold module_name /vagrant/extra_addons
 
-Special Thanks:
-https://github.com/JamesGreenAU/OdooVagrant
+## Using Enterprise Edition ##
+Provided your github account is allowed to access the enterprise repo.
+
+Edit 'install_enterprise.sh' and fill your credentials
+    
+    GITHUB_USER='<fill in your username>'
+    GITHUB_PASS='<fill your password>'
+
+then run.
+
+    bash /vagrant/install_enterprise.sh
+
+Special Thanks: <br />
+https://github.com/JamesGreenAU/OdooVagrant <br />
 https://github.com/Yenthe666/InstallScript
