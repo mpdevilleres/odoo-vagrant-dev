@@ -1,3 +1,13 @@
-.idea
-.vagrant
-*.pyc
+*
+
+!.gitignore
+!bootstrap.sh
+!LICENSE
+!README.md
+!Vagrantfile
+!enterprise_addons.sh
+
+!conf/
+!conf/*
+!system_services/
+!system_services/mailcatcher.service

@@ -8,10 +8,13 @@ https://github.com/odoo
 - Postgresql 9.6
 - MailCatcher
 - Python 2.7
+- [Odoo Community Addons](https://github.com/OCA) (Web, Server Tools)
+
+## Requirements ##
+- [Vagrant](https://www.vagrantup.com/downloads.html)
+- [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
 
 ## Setup Development ##
-Make sure you have Vagrant in your machine (visit https://www.vagrantup.com/)
-
 Step 1: run vagrant (it may take few minutes)
 
     $ vagrant up
@@ -20,20 +23,22 @@ Step 2: ssh vagrant
 
     $ vagrant ssh
 
-Step 3: run odoo
+Step 3: open web browser
 
-    $ python /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf
-
-    or 
-
-    $ python /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf -d test_db
-
-Step 4: open web browser
-        
     http://localhost:8069
 
+## Credentials ##
+1. Postgresql
+    - User: odoo
+    - Password: odoo
+
+## Running Odoo ##
+
+    $ /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf
+
 ## Creating your first Module ##
-    $ python /vagrant/odoo/odoo-bin scaffold module_name /vagrant/extra_addons
+    
+    $ /vagrant/odoo/odoo-bin scaffold module_name /vagrant/_extra_addons
 
 ## Using Enterprise Edition ##
 Provided your github account is allowed to access the enterprise repo.
@@ -46,7 +51,7 @@ Edit 'install_enterprise.sh' and fill your credentials
 then run.
 
     bash /vagrant/install_enterprise.sh
-
-Special Thanks: <br />
-https://github.com/JamesGreenAU/OdooVagrant <br />
+    
+Special Thanks: <br/>
+https://github.com/JamesGreenAU/OdooVagrant <br/>
 https://github.com/Yenthe666/InstallScript
