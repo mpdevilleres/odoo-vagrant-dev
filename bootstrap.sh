@@ -97,7 +97,7 @@ else
     echo -e "\n---- Clone Web Source ----"
     sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/OCA/web.git ${OCA_DIR}/web
     echo -e "\n---- Clone Server Tools Source ----"
-    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/OCA/web.git ${OCA_DIR}/server_tools
+    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/OCA/server-tools.git ${OCA_DIR}/server_tools
     echo -e "\n---- Install Server Tools Requirements ----"
     sudo -H pip install -r ${OCA_DIR}/server_tools/requirements.txt
 fi
