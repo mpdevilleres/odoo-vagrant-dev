@@ -1,0 +1,16 @@
+image: ubuntu:16.04
+
+stages:
+  - test
+  - deploy
+
+development:
+  stage: test
+  script:
+    - sudo bash bootstrap.sh
+
+production:
+  stage: test
+  script:
+    - sudo sed -i -e 's|IS_DEVELOPMENT="true"|IS_DEVELOPMENT="false"|g' bootstrap.sh
+    - sudo bash bootstrap.sh

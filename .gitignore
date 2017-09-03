@@ -1,14 +1,15 @@
 *
 
 !.gitignore
+!.gitlab-ci.yml
 !bootstrap.sh
 !LICENSE
 !README.md
 !Vagrantfile
 !enterprise_addons.sh
 
-!conf/
-!conf/*
+!conf/odoo.conf.template
+
 !system_services/
 !system_services/mailcatcher.service
 !system_services/odoo.service

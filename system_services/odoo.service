@@ -9,7 +9,7 @@ PermissionsStartOnly=true
 SyslogIdentifier=odoo-server-te
 User=odoo-te
 Group=odoo-te
-ExecStart=__SERVER_DIR__/odoo/odoo-bin --config=__SERVER_DIR__/conf/odoo.conf --addons-path=__SERVER_DIR__/_oca_addons/,__SERVER_DIR__/_extra_addons/
+ExecStart=__SERVER_DIR__/odoo/odoo-bin --config=__SERVER_DIR__/conf/odoo.conf
 WorkingDirectory=__SERVER_DIR__/
 
 [Install]

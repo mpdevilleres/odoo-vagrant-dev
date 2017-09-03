@@ -6,7 +6,7 @@ IS_DEVELOPMENT="true"
 if [[ ${IS_DEVELOPMENT} == "true" ]]; then
     SERVER_DIR="/vagrant"
 else
-    SERVER_DIR="${HOME}/server"
+    SERVER_DIR="${HOME}/odoo_server"
 fi
 
 EXTRA_DIR="${SERVER_DIR}/_extra_addons"
@@ -127,7 +127,8 @@ fi
 # Configure Config File
 #--------------------------------------------------
 echo -e "\n---- Configure Config File ----"
-sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" ${SERVER_DIR}/config/odoo.conf
+sudo cp ${SERVER_DIR}/conf/odoo.conf.template ${SERVER_DIR}/conf/odoo.conf
+sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" ${SERVER_DIR}/conf/odoo.conf
 
 #--------------------------------------------------
 # Install CUPS
@@ -147,8 +148,7 @@ sudo gem install mailcatcher
 echo -e "\n---- Injecting mailcatcher.service ----"
 sudo cp ${SYSTEMD_SERVICES_DIR}/mailcatcher.service /lib/systemd/system/
 
-IS_DEVELOPMENT="true"
-if [[ ${IS_DEVELOPMENT} == "true" ]]; then
+if [[ ${IS_DEVELOPMENT} == "false" ]]; then
     echo -e "\n---- Injecting odoo.service ----"
     sudo cp ${SYSTEMD_SERVICES_DIR}/odoo.service /lib/systemd/system/
     sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" /lib/systemd/system/odoo.service
@@ -161,7 +161,7 @@ echo -e "\n---- Enable mailcatcher.service ----"
 sudo systemctl enable mailcatcher.service
 
 IS_DEVELOPMENT="true"
-if [[ ${IS_DEVELOPMENT} == "true" ]]; then
+if [[ ${IS_DEVELOPMENT} == "false" ]]; then
     echo -e "\n---- Enable odoo.service ----"
     sudo systemctl enable odoo.service
 fi
