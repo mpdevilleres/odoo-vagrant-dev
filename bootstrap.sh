@@ -124,14 +124,10 @@ else
 fi
 
 #--------------------------------------------------
-# Create Config Directory
+# Configure Config File
 #--------------------------------------------------
-if [ -d "${SERVER_DIR}/config" ]; then
-    echo -e "\n---- Config Folder Exist ----"
-else
-    echo -e "\n---- Create Config Folder ----"
-    sudo mkdir -p ${SERVER_DIR}/config
-fi
+echo -e "\n---- Configure Config File ----"
+sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" ${SERVER_DIR}/config/odoo.conf
 
 #--------------------------------------------------
 # Install CUPS
@@ -148,20 +144,28 @@ sudo gem install mailcatcher
 #--------------------------------------------------
 # Add Systemd Startup
 #--------------------------------------------------
-for f in ${SYSTEMD_SERVICES_DIR}/*.service; do
-    filename=$(basename ${f})
-    echo -e "\n---- Injecting ${filename} ----"
-    sudo cp ${SYSTEMD_SERVICES_DIR}/${filename} /lib/systemd/system/
-done
+echo -e "\n---- Injecting mailcatcher.service ----"
+sudo cp ${SYSTEMD_SERVICES_DIR}/mailcatcher.service /lib/systemd/system/
+
+IS_DEVELOPMENT="true"
+if [[ ${IS_DEVELOPMENT} == "true" ]]; then
+    echo -e "\n---- Injecting odoo.service ----"
+    sudo cp ${SYSTEMD_SERVICES_DIR}/odoo.service /lib/systemd/system/
+    sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" /lib/systemd/system/odoo.service
+fi
 
 echo -e "\n---- Reload Services ----"
 sudo systemctl daemon-reload
 
-for f in ${SYSTEMD_SERVICES_DIR}/*.service; do
-    filename=$(basename ${f})
-    echo -e "\n---- Enable ${filename} ----"
-    sudo systemctl enable ${f}
-done
+echo -e "\n---- Enable mailcatcher.service ----"
+sudo systemctl enable mailcatcher.service
+
+IS_DEVELOPMENT="true"
+if [[ ${IS_DEVELOPMENT} == "true" ]]; then
+    echo -e "\n---- Enable odoo.service ----"
+    sudo systemctl enable odoo.service
+fi
+
 
 #--------------------------------------------------
 # Install custom dependencies and configuration
@@ -170,5 +174,3 @@ echo -e "\n---- Install custom dependencies ----"
 
 
 echo -e "\n---- config git ----"
-#sudo git config --global user.name ""
-#sudo git config --global user.email ""

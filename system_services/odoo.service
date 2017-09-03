@@ -1,0 +1,16 @@
+[Unit]
+Description=Odoo
+Requires=postgresql.service
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+PermissionsStartOnly=true
+SyslogIdentifier=odoo-server-te
+User=odoo-te
+Group=odoo-te
+ExecStart=__SERVER_DIR__/odoo/odoo-bin --config=__SERVER_DIR__/conf/odoo.conf --addons-path=__SERVER_DIR__/_oca_addons/,__SERVER_DIR__/_extra_addons/
+WorkingDirectory=__SERVER_DIR__/
+
+[Install]
+WantedBy=multi-user.target

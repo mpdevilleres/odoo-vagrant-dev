@@ -11,3 +11,4 @@
 !conf/*
 !system_services/
 !system_services/mailcatcher.service
+!system_services/odoo.service
