@@ -13,6 +13,13 @@ EXTRA_DIR="${SERVER_DIR}/_extra_addons"
 OCA_DIR="${SERVER_DIR}/_oca_addons"
 SYSTEMD_SERVICES_DIR="${SERVER_DIR}/system_services"
 
+if [ -d "${SERVER_DIR}" ]; then
+    echo -e "\n---- Server Directory Exist ----"
+else
+    echo -e "\n---- Create Server Directory ----"
+    sudo mkdir -p ${SERVER_DIR}
+fi
+
 echo -e "\n---- Update Server ----"
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -59,15 +66,15 @@ sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python
 # Install Basic Odoo
 #--------------------------------------------------
 
-if [ -d "${SERVER_DIR}/odoo" ]; then
+if [ -d "${SERVER_DIR}/odoo10" ]; then
     echo -e "\n---- Odoo Source Exist ----"
 else
     echo -e "\n---- Clone Odoo Source ----"
-    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/odoo/odoo.git ${SERVER_DIR}/odoo
+    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/odoo/odoo.git ${SERVER_DIR}/odoo10
 fi
 
 echo -e "\n---- PIP Install Requirements Odoo ----"
-sudo -H pip install -r ${SERVER_DIR}/odoo/requirements.txt
+sudo -H pip install -r ${SERVER_DIR}/odoo10/requirements.txt
 
 # wkhtmltopdf
 echo -e "\n---- Install other required packages ----"
@@ -158,11 +165,14 @@ echo -e "\n---- Reload Services ----"
 sudo systemctl daemon-reload
 
 echo -e "\n---- Enable mailcatcher.service ----"
+    sudo chmod 755 /lib/systemd/system/mailcatcher.service
+    sudo chown root: /lib/systemd/system/mailcatcher.service
 sudo systemctl enable mailcatcher.service
 
-IS_DEVELOPMENT="true"
 if [[ ${IS_DEVELOPMENT} == "false" ]]; then
     echo -e "\n---- Enable odoo.service ----"
+    sudo chmod 755 /lib/systemd/system/odoo.service
+    sudo chown root: /lib/systemd/system/odoo.service
     sudo systemctl enable odoo.service
 fi
 
