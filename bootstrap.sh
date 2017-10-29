@@ -59,22 +59,22 @@ sudo apt-get install -y wget git python python-dev \
                         libxml2-dev libxslt1-dev libjpeg-dev libsasl2-dev libldap2-dev
 
 # install PIP
-sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python
+sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
 
 
 #--------------------------------------------------
 # Install Basic Odoo
 #--------------------------------------------------
 
-if [ -d "${SERVER_DIR}/odoo10" ]; then
+if [ -d "${SERVER_DIR}/odoo11" ]; then
     echo -e "\n---- Odoo Source Exist ----"
 else
     echo -e "\n---- Clone Odoo Source ----"
-    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/odoo/odoo.git ${SERVER_DIR}/odoo10
+    sudo git clone --depth 1 --single-branch --branch 11.0 https://github.com/odoo/odoo.git ${SERVER_DIR}/odoo11
 fi
 
 echo -e "\n---- PIP Install Requirements Odoo ----"
-sudo -H pip install -r ${SERVER_DIR}/odoo10/requirements.txt
+sudo -H pip3 install -r ${SERVER_DIR}/odoo11/requirements.txt
 
 # wkhtmltopdf
 echo -e "\n---- Install other required packages ----"
@@ -92,23 +92,6 @@ sudo apt-get install -y python-software-properties
 sudo curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
 sudo apt-get install -y nodejs
 sudo npm install -g less less-plugin-clean-css
-
-#--------------------------------------------------
-# Download OCA modules
-#--------------------------------------------------
-if [ -d "${OCA_DIR}" ]; then
-    echo -e "\n---- OCA Addons Exist ----"
-else
-    echo -e "\n---- Create oca_addons ----"
-    sudo mkdir -p ${OCA_DIR}
-    echo -e "\n---- Clone Web Source ----"
-    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/OCA/web.git ${OCA_DIR}/web
-    echo -e "\n---- Clone Server Tools Source ----"
-    sudo git clone --depth 1 --single-branch --branch 10.0 https://github.com/OCA/server-tools.git ${OCA_DIR}/server_tools
-    echo -e "\n---- Install Server Tools Requirements ----"
-    sudo -H pip install -r ${OCA_DIR}/server_tools/requirements.txt
-fi
-
 
 #--------------------------------------------------
 # Create Log Directory
