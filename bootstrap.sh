@@ -51,16 +51,30 @@ if [[ ${IS_DEVELOPMENT} == "true" ]]; then
 fi
 
 #--------------------------------------------------
-# Install Tool Packages
+# Install Python 3.6.3
 #--------------------------------------------------
 echo -e "\n---- Install tool packages ----"
-sudo apt-get install -y wget git python python-dev \
-                        gdebi-core libpq-dev build-essential libssl-dev libffi-dev \
-                        libxml2-dev libxslt1-dev libjpeg-dev libsasl2-dev libldap2-dev
+sudo apt-get install -y build-essential wget git gdebi-core \
+                        libpq-dev libffi-dev libxml2-dev libxslt1-dev \
+                        libreadline-gplv2-dev libncursesw5-dev libssl-dev \
+                        libsqlite3-dev libgdbm-dev libc6-dev libbz2-dev \
+                        zlib1g-dev libfreetype6-dev libjpeg-dev libsasl2-dev \
+                        libldap2-dev
 
-# install PIP
-sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python3
 
+echo -e "\n---- Install Python 3.6.3 ----"
+wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
+tar xvf Python-3.6.3.tar.xz
+cd Python-3.6.3
+./configure --enable-optimizations
+sudo make altinstall
+
+## install PIP 2
+#sudo apt-get install -y python-dev
+#sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python
+
+cd ..
+sudo rm -rf Python-3.6.3 && sudo rm Python-3.6.3.tar.xz
 
 #--------------------------------------------------
 # Install Basic Odoo
@@ -74,7 +88,7 @@ else
 fi
 
 echo -e "\n---- PIP Install Requirements Odoo ----"
-sudo -H pip3 install -r ${SERVER_DIR}/odoo11/requirements.txt
+sudo -H pip3.6 install -r ${SERVER_DIR}/odoo11/requirements.txt
 
 # wkhtmltopdf
 echo -e "\n---- Install other required packages ----"

@@ -1,4 +1,4 @@
-# Vagrant configuration for Odoo 10 module development #
+# Vagrant configuration for Odoo 11 module development #
 
 Provides structure for developing odoo modules with community and/or enterprise source
 https://github.com/odoo
@@ -7,7 +7,7 @@ https://github.com/odoo
 - Ubuntu 16 "Xenial"
 - Postgresql 9.6
 - MailCatcher
-- Python 2.7
+- Python 3.6
 - [Odoo Community Addons](https://github.com/OCA) (Web, Server Tools)
 
 ## Requirements ##
