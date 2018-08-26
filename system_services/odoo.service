@@ -6,9 +6,9 @@ After=network.target postgresql.service
 [Service]
 Type=simple
 PermissionsStartOnly=true
-SyslogIdentifier=odoo-server-te
-User=odoo-te
-Group=odoo-te
+SyslogIdentifier=odoo-server-11
+User=ubuntu
+Group=ubuntu
 ExecStart=__SERVER_DIR__/odoo/odoo-bin --config=__SERVER_DIR__/conf/odoo.conf
 WorkingDirectory=__SERVER_DIR__/
 

@@ -6,11 +6,11 @@ IS_DEVELOPMENT="true"
 if [[ ${IS_DEVELOPMENT} == "true" ]]; then
     SERVER_DIR="/vagrant"
 else
-    SERVER_DIR="${HOME}/odoo_server"
+    SERVER_DIR="${HOME}/odoo-server"
 fi
 
-EXTRA_DIR="${SERVER_DIR}/_extra_addons"
-OCA_DIR="${SERVER_DIR}/_oca_addons"
+EXTRA_DIR="${SERVER_DIR}/_extra_addons_11"
+OCA_DIR="${SERVER_DIR}/_oca_addons_11"
 SYSTEMD_SERVICES_DIR="${SERVER_DIR}/system_services"
 
 if [ -d "${SERVER_DIR}" ]; then
@@ -59,8 +59,7 @@ sudo apt-get install -y build-essential wget git gdebi-core \
                         libreadline-gplv2-dev libncursesw5-dev libssl-dev \
                         libsqlite3-dev libgdbm-dev libc6-dev libbz2-dev \
                         zlib1g-dev libfreetype6-dev libjpeg-dev libsasl2-dev \
-                        libldap2-dev
-
+                        libldap2-dev libreadline-gplv2-dev libncursesw5-dev tk-dev
 
 echo -e "\n---- Install Python 3.6.3 ----"
 wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
@@ -68,10 +67,6 @@ tar xvf Python-3.6.3.tar.xz
 cd Python-3.6.3
 ./configure --enable-optimizations
 sudo make altinstall
-
-## install PIP 2
-#sudo apt-get install -y python-dev
-#sudo curl https://bootstrap.pypa.io/get-pip.py | sudo python
 
 cd ..
 sudo rm -rf Python-3.6.3 && sudo rm Python-3.6.3.tar.xz
@@ -150,26 +145,26 @@ sudo gem install mailcatcher
 # Add Systemd Startup
 #--------------------------------------------------
 echo -e "\n---- Injecting mailcatcher.service ----"
-sudo cp ${SYSTEMD_SERVICES_DIR}/mailcatcher.service /lib/systemd/system/
+sudo cp ${SYSTEMD_SERVICES_DIR}/mailcatcher.service /etc/systemd/system/
 
 if [[ ${IS_DEVELOPMENT} == "false" ]]; then
     echo -e "\n---- Injecting odoo.service ----"
-    sudo cp ${SYSTEMD_SERVICES_DIR}/odoo.service /lib/systemd/system/
-    sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" /lib/systemd/system/odoo.service
+    sudo cp ${SYSTEMD_SERVICES_DIR}/odoo.service /etc/systemd/system/
+    sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" /etc/systemd/system/odoo.service
 fi
 
 echo -e "\n---- Reload Services ----"
 sudo systemctl daemon-reload
 
 echo -e "\n---- Enable mailcatcher.service ----"
-    sudo chmod 755 /lib/systemd/system/mailcatcher.service
-    sudo chown root: /lib/systemd/system/mailcatcher.service
+    sudo chmod 755 /etc/systemd/system/mailcatcher.service
+    sudo chown root: /etc/systemd/system/mailcatcher.service
 sudo systemctl enable mailcatcher.service
 
 if [[ ${IS_DEVELOPMENT} == "false" ]]; then
     echo -e "\n---- Enable odoo.service ----"
-    sudo chmod 755 /lib/systemd/system/odoo.service
-    sudo chown root: /lib/systemd/system/odoo.service
+    sudo chmod 755 /etc/systemd/system/odoo.service
+    sudo chown root: /etc/systemd/system/odoo.service
     sudo systemctl enable odoo.service
 fi
 
@@ -178,6 +173,3 @@ fi
 # Install custom dependencies and configuration
 #--------------------------------------------------
 echo -e "\n---- Install custom dependencies ----"
-
-
-echo -e "\n---- config git ----"

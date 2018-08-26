@@ -8,7 +8,6 @@ Vagrant.configure(2) do |config|
   # -----------------------------------------------------------------------------------------------
   # Port forwarding
   # -----------------------------------------------------------------------------------------------
-
   # PostgreSQL port for remote admin on the host
   config.vm.network :forwarded_port, host: 5432, guest: 5432
 
@@ -25,7 +24,7 @@ Vagrant.configure(2) do |config|
   # -----------------------------------------------------------------------------------------------
   config.vm.provider "virtualbox" do |vb|
    vb.gui = false
-   vb.memory = "2000"
+   vb.memory = "4000"
    vb.name = "Odoo 11 Local Dev Environment"
    vb.cpus = 2
   end
