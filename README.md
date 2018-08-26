@@ -8,11 +8,21 @@ https://github.com/odoo
 - Postgresql 9.6
 - MailCatcher
 - Python 3.6
-- [Odoo Community Addons](https://github.com/OCA) (Web, Server Tools)
 
 ## Requirements ##
 - [Vagrant](https://www.vagrantup.com/downloads.html)
 - [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+
+## Using Enterprise Edition ##
+Provided your github account is allowed to access the enterprise repo.
+
+Edit 'bootstrap.sh' and fill your credentials before running vagrant up.
+    
+    IS_ENTERPRISE='true'
+    GITHUB_USER='<fill in your username>'
+    GITHUB_PASS='<fill your password>'
+
+Else Proceed below.
 
 ## Setup Development ##
 Step 1: run vagrant (it may take few minutes)
@@ -28,7 +38,7 @@ Step 3: open web browser
     http://localhost:8069
 
 ## Credentials ##
-1. Postgresql
+1. Postgresql (localhost)
     - User: odoo
     - Password: odoo
 
@@ -40,18 +50,7 @@ Step 3: open web browser
     
     $ /vagrant/odoo/odoo-bin scaffold module_name /vagrant/_extra_addons
 
-## Using Enterprise Edition ##
-Provided your github account is allowed to access the enterprise repo.
-
-Edit 'install_enterprise.sh' and fill your credentials
     
-    GITHUB_USER='<fill in your username>'
-    GITHUB_PASS='<fill your password>'
-
-then run.
-
-    bash /vagrant/install_enterprise.sh
-    
-Special Thanks: <br/>
+Other References: <br/>
 https://github.com/JamesGreenAU/OdooVagrant <br/>
 https://github.com/Yenthe666/InstallScript
