@@ -1,18 +1,25 @@
 #!/usr/bin/env bash
 #--------------------------------------------------
+# Variables
+#--------------------------------------------------
+ODOO_VERSION=11.0
+SERVER_DIR="/vagrant"
+
+EXTRA_ADDONS_DIR="${SERVER_DIR}/_extra_addons"
+DATA_DIR="${SERVER_DIR}/data"
+
+IS_ENTERPRISE="false"
+
+# Required IF YOU WANT TO INSTALL ENTERPRISE ! ! !
+#--------------------------------------------------
+GITHUB_USER='<fill in your username>'
+GITHUB_PASS='<fill your password>'
+ENTERPRISE_DIR="${SERVER_DIR}/_enterprise_addons"
+
+
+#--------------------------------------------------
 # Update Server
 #--------------------------------------------------
-IS_DEVELOPMENT="true"
-if [[ ${IS_DEVELOPMENT} == "true" ]]; then
-    SERVER_DIR="/vagrant"
-else
-    SERVER_DIR="${HOME}/odoo-server"
-fi
-
-EXTRA_DIR="${SERVER_DIR}/_extra_addons_11"
-OCA_DIR="${SERVER_DIR}/_oca_addons_11"
-SYSTEMD_SERVICES_DIR="${SERVER_DIR}/system_services"
-
 if [ -d "${SERVER_DIR}" ]; then
     echo -e "\n---- Server Directory Exist ----"
 else
@@ -41,14 +48,12 @@ sudo apt-get update
 sudo apt-get install -y postgresql-9.6
 sudo -u postgres psql -c "CREATE USER odoo WITH CREATEDB NOCREATEROLE PASSWORD 'odoo';"
 
-if [[ ${IS_DEVELOPMENT} == "true" ]]; then
-    sudo echo "host    all             all             0.0.0.0/0            md5" | sudo tee -a /etc/postgresql/9.6/main/pg_hba.conf
-    sudo -u postgres pg_ctlcluster 9.6 main reload
+sudo echo "host    all             all             0.0.0.0/0            md5" | sudo tee -a /etc/postgresql/9.6/main/pg_hba.conf
+sudo -u postgres pg_ctlcluster 9.6 main reload
 
-    sudo echo "listen_addresses = '*'" | sudo tee -a /etc/postgresql/9.6/main/postgresql.conf
-    sudo echo "max_locks_per_transaction = 200" | sudo tee -a /etc/postgresql/9.6/main/postgresql.conf
-    sudo systemctl restart postgresql
-fi
+sudo echo "listen_addresses = '*'" | sudo tee -a /etc/postgresql/9.6/main/postgresql.conf
+sudo echo "max_locks_per_transaction = 200" | sudo tee -a /etc/postgresql/9.6/main/postgresql.conf
+sudo systemctl restart postgresql
 
 #--------------------------------------------------
 # Install Python 3.6.3
@@ -79,11 +84,11 @@ if [ -d "${SERVER_DIR}/odoo11" ]; then
     echo -e "\n---- Odoo Source Exist ----"
 else
     echo -e "\n---- Clone Odoo Source ----"
-    sudo git clone --depth 1 --single-branch --branch 11.0 https://github.com/odoo/odoo.git ${SERVER_DIR}/odoo11
+    sudo git clone --depth 1 --single-branch --branch ${ODOO_VERSION} https://github.com/odoo/odoo.git ${SERVER_DIR}/odoo
 fi
 
 echo -e "\n---- PIP Install Requirements Odoo ----"
-sudo -H pip3.6 install -r ${SERVER_DIR}/odoo11/requirements.txt
+sudo -H pip3.6 install -r ${SERVER_DIR}/odoo/requirements.txt
 
 # wkhtmltopdf
 echo -e "\n---- Install other required packages ----"
@@ -103,7 +108,7 @@ sudo apt-get install -y nodejs
 sudo npm install -g less less-plugin-clean-css
 
 #--------------------------------------------------
-# Create Log Directory
+# Create Directories
 #--------------------------------------------------
 if [ -d "${SERVER_DIR}/logs" ]; then
     echo -e "\n---- Log Folder Exist ----"
@@ -112,27 +117,19 @@ else
     sudo mkdir -p ${SERVER_DIR}/logs
 fi
 
-#--------------------------------------------------
-# Create Addon Directory
-#--------------------------------------------------
-if [ -d "${EXTRA_DIR}" ]; then
+if [ -d "${DATA_DIR}" ]; then
+    echo -e "\n---- Data Folder Exist ----"
+else
+    echo -e "\n---- Create Data Folder ----"
+    sudo mkdir -p ${DATA_DIR}
+fi
+
+if [ -d "${EXTRA_ADDONS_DIR}" ]; then
     echo -e "\n---- Addon Folder Exist ----"
 else
     echo -e "\n---- Create Addon Folder ----"
-    sudo mkdir -p ${EXTRA_DIR}
+    sudo mkdir -p ${EXTRA_ADDONS_DIR}
 fi
-
-#--------------------------------------------------
-# Configure Config File
-#--------------------------------------------------
-echo -e "\n---- Configure Config File ----"
-sudo cp ${SERVER_DIR}/conf/odoo.conf.template ${SERVER_DIR}/conf/odoo.conf
-sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" ${SERVER_DIR}/conf/odoo.conf
-
-#--------------------------------------------------
-# Install CUPS
-#--------------------------------------------------
-# sudo apt-get install cups
 
 #--------------------------------------------------
 # Install Mail Catcher
@@ -141,35 +138,51 @@ echo -e "\n---- Install Mail Catcher ----"
 sudo apt-get install -y libsqlite3-dev ruby ruby-dev
 sudo gem install mailcatcher
 
-#--------------------------------------------------
-# Add Systemd Startup
-#--------------------------------------------------
 echo -e "\n---- Injecting mailcatcher.service ----"
-sudo cp ${SYSTEMD_SERVICES_DIR}/mailcatcher.service /etc/systemd/system/
 
-if [[ ${IS_DEVELOPMENT} == "false" ]]; then
-    echo -e "\n---- Injecting odoo.service ----"
-    sudo cp ${SYSTEMD_SERVICES_DIR}/odoo.service /etc/systemd/system/
-    sudo sed -i -e "s|__SERVER_DIR__|${SERVER_DIR}|g" /etc/systemd/system/odoo.service
-fi
+sudo cp ${SERVER_DIR}/system_services/mailcatcher.service /etc/systemd/system/
 
 echo -e "\n---- Reload Services ----"
 sudo systemctl daemon-reload
 
 echo -e "\n---- Enable mailcatcher.service ----"
-    sudo chmod 755 /etc/systemd/system/mailcatcher.service
-    sudo chown root: /etc/systemd/system/mailcatcher.service
+sudo chmod 755 /etc/systemd/system/mailcatcher.service
+sudo chown root: /etc/systemd/system/mailcatcher.service
 sudo systemctl enable mailcatcher.service
 
-if [[ ${IS_DEVELOPMENT} == "false" ]]; then
-    echo -e "\n---- Enable odoo.service ----"
-    sudo chmod 755 /etc/systemd/system/odoo.service
-    sudo chown root: /etc/systemd/system/odoo.service
-    sudo systemctl enable odoo.service
+
+#--------------------------------------------------
+# Install Enterprise
+#--------------------------------------------------
+if [[ ${IS_ENTERPRISE} == "true" ]]; then
+    echo -e "\n---- Pull Enterprise Source ----"
+    sudo git clone --depth 1 --single-branch --branch ${ODOO_VERSION} https://${GITHUB_USER}:${GITHUB_PASS}@github.com/odoo/enterprise.git ${ENTERPRISE_DIR}
+fi
+
+#--------------------------------------------------
+# Create Config File
+#--------------------------------------------------
+sudo sed -i 's#/vagrant/odoo/addons#/vagrant/_enterprise_addons,/vagrant/odoo/addons#g' /vagrant/conf/odoo.conf
+
+if [ -d "${SERVER_DIR}" ]; then
+    echo -e "\n---- Server Directory Exist ----"
 fi
 
 
 #--------------------------------------------------
-# Install custom dependencies and configuration
+# Configure Config File
 #--------------------------------------------------
-echo -e "\n---- Install custom dependencies ----"
+echo -e "\n---- Configure Config File ----"
+
+CONF_FILE=${SERVER_DIR}/conf/odoo.conf
+ADDONS_DIR="/vagrant/odoo/addons,${EXTRA_ADDONS_DIR}"
+
+if [[ ${IS_ENTERPRISE} == "true" ]]; then
+    ADDONS_DIR="/vagrant/_enterprise_addons,${ADDONS_DIR}"
+
+fi
+
+sudo sed -i -e "s|addons_path =|addons_path = ${ADDONS_DIR}|g" ${CONF_FILE}
+sudo sed -i -e "s|data_dir =|data_dir = ${DATA_DIR}|g" ${CONF_FILE}
+
+echo -e "\n---- Done Preparing Your Development Environment ----"

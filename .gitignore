@@ -1,7 +1,6 @@
 *
 
 !.gitignore
-!.gitlab-ci.yml
 !bootstrap.sh
 !LICENSE
 !README.md
