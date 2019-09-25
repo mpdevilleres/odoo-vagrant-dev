@@ -44,11 +44,11 @@ Step 3: open web browser
 
 ## Running Odoo ##
 
-    $ /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf
+    $ python3.6 /vagrant/odoo/odoo-bin -c /vagrant/conf/odoo.conf
 
 ## Creating your first Module ##
     
-    $ /vagrant/odoo/odoo-bin scaffold module_name /vagrant/_extra_addons
+    $ python3.6 /vagrant/odoo/odoo-bin scaffold module_name /vagrant/_extra_addons
 
     
 Other References: <br/>
